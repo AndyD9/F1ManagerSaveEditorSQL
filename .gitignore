@@ -1,0 +1,7 @@
+# Saves et bases extraites : jamais dans le dépôt
+*.sav
+*.db
+chunk1
+
+# Config locale
+.claude/

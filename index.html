@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F1 Manager Save Editor</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+  <script src="savefile.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">F1M <span>Save Editor</span></div>
+    <div class="fileinfo" id="fileinfo">Aucune save chargée</div>
+    <div class="actions">
+      <button id="btnOpen" class="primary">Ouvrir .sav</button>
+      <button id="btnUndo" disabled title="Annuler la dernière modification (Ctrl+Z)">↶ Annuler</button>
+      <button id="btnSave" class="accent" disabled>Enregistrer</button>
+      <button id="btnSaveAs" disabled>Enregistrer sous…</button>
+    </div>
+    <input type="file" id="fileInput" accept=".sav" hidden>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="dev" class="active">Développement</button>
+    <button data-tab="perf">Performances</button>
+    <button data-tab="staff">Staff &amp; pilotes</button>
+    <button data-tab="team">Équipe &amp; finances</button>
+    <button data-tab="buildings">Installations</button>
+    <button data-tab="rules">Règlement &amp; calendrier</button>
+    <button data-tab="tables">Tables</button>
+    <button data-tab="sql">SQL</button>
+    <button data-tab="repack">Unpack / Repack</button>
+    <button data-tab="journal">Journal <span id="journalCount" class="badge">0</span></button>
+  </nav>
+
+  <main>
+    <div id="dropzone" class="dropzone">
+      <div>
+        <p class="big">Glisse ta save <code>.sav</code> ici</p>
+        <p>ou clique sur <b>Ouvrir .sav</b></p>
+        <p class="muted">Saves F1 Manager 24 : <code>%LOCALAPPDATA%\F1Manager24\Saved\SaveGames</code><br>
+          Tout est traité localement dans ton navigateur, rien n'est envoyé.</p>
+      </div>
+    </div>
+
+    <section id="tab-dev" class="tab active"></section>
+    <section id="tab-perf" class="tab"></section>
+    <section id="tab-staff" class="tab"></section>
+    <section id="tab-team" class="tab"></section>
+    <section id="tab-buildings" class="tab"></section>
+    <section id="tab-rules" class="tab"></section>
+
+    <section id="tab-tables" class="tab">
+      <div class="split">
+        <aside class="sidebar">
+          <input id="tableFilter" type="search" placeholder="Filtrer table ou colonne (ex: cost, expertise)">
+          <ul id="tableList"></ul>
+        </aside>
+        <div class="content" id="tableView"><p class="muted">Choisis une table à gauche.</p></div>
+      </div>
+    </section>
+
+    <section id="tab-sql" class="tab">
+      <div class="card">
+        <textarea id="sqlInput" spellcheck="false" placeholder="SELECT * FROM Parts_Enum_DevSpeeds;   (Ctrl+Entrée pour exécuter)"></textarea>
+        <div class="row">
+          <button id="btnRunSql" class="primary">Exécuter</button>
+          <span class="muted">Les requêtes de modification (UPDATE, INSERT…) ne passent pas par l'annulation : utilise « Recharger la save » pour revenir en arrière.</span>
+        </div>
+        <div id="sqlHistory" class="history"></div>
+      </div>
+      <div id="sqlResult"></div>
+    </section>
+
+    <section id="tab-repack" class="tab"></section>
+
+    <section id="tab-journal" class="tab">
+      <div class="card">
+        <div class="row">
+          <h2>Modifications de la session</h2>
+          <button id="btnReset" class="danger">Recharger la save (annule tout)</button>
+        </div>
+        <ol id="journal" class="journal"></ol>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
